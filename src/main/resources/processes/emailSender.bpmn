@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0zggz2q" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.6.0">
+  <bpmn:process id="email-sender" name="Отправка почты" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_0hxihaq</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="validateEmail" name="Валидация Email" camunda:delegateExpression="${emailValidator}">
+      <bpmn:incoming>Flow_18vc8aj</bpmn:incoming>
+      <bpmn:outgoing>Flow_10zvxre</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_0lvwpi3">
+      <bpmn:incoming>Flow_0bex2vv</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_10zvxre" sourceRef="validateEmail" targetRef="Activity_09asf1p" />
+    <bpmn:sequenceFlow id="Flow_0tyzzd1" sourceRef="Activity_09asf1p" targetRef="Activity_0grkyz5" />
+    <bpmn:userTask id="Activity_09asf1p" name="Ввод текста письма">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="emailText" label="Текст письма" type="string" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_10zvxre</bpmn:incoming>
+      <bpmn:outgoing>Flow_0tyzzd1</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:boundaryEvent id="Event_0kh11wl" attachedToRef="validateEmail">
+      <bpmn:outgoing>Flow_0czecdu</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_09rg776" errorRef="Error_0zgn0gt" />
+    </bpmn:boundaryEvent>
+    <bpmn:userTask id="Activity_13aq7g2" name="Ошибка ввода email адреса">
+      <bpmn:incoming>Flow_0czecdu</bpmn:incoming>
+      <bpmn:outgoing>Flow_0c2ejkq</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0czecdu" sourceRef="Event_0kh11wl" targetRef="Activity_13aq7g2" />
+    <bpmn:sequenceFlow id="Flow_0hxihaq" sourceRef="StartEvent_1" targetRef="Activity_0hjase3" />
+    <bpmn:sequenceFlow id="Flow_18vc8aj" sourceRef="Activity_0hjase3" targetRef="validateEmail" />
+    <bpmn:userTask id="Activity_0hjase3" name="Выбор email адреса">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="emailAddress" label="Email адрес" type="string" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0hxihaq</bpmn:incoming>
+      <bpmn:incoming>Flow_0c2ejkq</bpmn:incoming>
+      <bpmn:outgoing>Flow_18vc8aj</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0c2ejkq" sourceRef="Activity_13aq7g2" targetRef="Activity_0hjase3" />
+    <bpmn:sequenceFlow id="Flow_0bex2vv" sourceRef="Activity_0grkyz5" targetRef="Event_0lvwpi3" />
+    <bpmn:serviceTask id="Activity_0grkyz5" name="Отправка письма" camunda:delegateExpression="${prosesEmailSender}">
+      <bpmn:incoming>Flow_0tyzzd1</bpmn:incoming>
+      <bpmn:outgoing>Flow_0bex2vv</bpmn:outgoing>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmn:error id="Error_0zgn0gt" name="emailValidateError" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="email-sender">
+      <bpmndi:BPMNEdge id="Flow_0bex2vv_di" bpmnElement="Flow_0bex2vv">
+        <di:waypoint x="1000" y="120" />
+        <di:waypoint x="1112" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0c2ejkq_di" bpmnElement="Flow_0c2ejkq">
+        <di:waypoint x="470" y="280" />
+        <di:waypoint x="320" y="280" />
+        <di:waypoint x="320" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_18vc8aj_di" bpmnElement="Flow_18vc8aj">
+        <di:waypoint x="370" y="120" />
+        <di:waypoint x="470" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0hxihaq_di" bpmnElement="Flow_0hxihaq">
+        <di:waypoint x="178" y="120" />
+        <di:waypoint x="270" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0czecdu_di" bpmnElement="Flow_0czecdu">
+        <di:waypoint x="520" y="178" />
+        <di:waypoint x="520" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0tyzzd1_di" bpmnElement="Flow_0tyzzd1">
+        <di:waypoint x="790" y="120" />
+        <di:waypoint x="900" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10zvxre_di" bpmnElement="Flow_10zvxre">
+        <di:waypoint x="570" y="120" />
+        <di:waypoint x="690" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="142" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="129" y="145" width="64" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ic9kt7_di" bpmnElement="validateEmail">
+        <dc:Bounds x="470" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0lvwpi3_di" bpmnElement="Event_0lvwpi3">
+        <dc:Bounds x="1112" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ygjula_di" bpmnElement="Activity_09asf1p">
+        <dc:Bounds x="690" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_13aq7g2_di" bpmnElement="Activity_13aq7g2">
+        <dc:Bounds x="470" y="240" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1820u7x_di" bpmnElement="Activity_0hjase3">
+        <dc:Bounds x="270" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0keg8mr_di" bpmnElement="Activity_0grkyz5">
+        <dc:Bounds x="900" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1ok54vf_di" bpmnElement="Event_0kh11wl">
+        <dc:Bounds x="502" y="142" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
